@@ -51,10 +51,14 @@ public class Client {
 	private int worstFit = INT_MIN;
 	private boolean worst = false;
 	
-	//Global variables for ShortestTime
+	//Global variables for cheapestFit
 	
-	private int shortest = Integer.MAX_VALUE;
-	private int serverBoot = Integer.MAX_VALUE;
+
+	private int serverHourlyRate = Integer.MAX_VALUE;
+	private int initialLow = Integer.MAX_VALUE;
+	private Float lowest = Float.MAX_VALUE;
+	private Float rate;
+	private int bootUp; 
 
 
 
@@ -72,6 +76,7 @@ public class Client {
 				//if the input string begins with JOBN, 
 				//read the input line and get job values 
 				jobRecieve();
+				
 
 				//request all information of all servers
 				sendToServer("RESC All");
@@ -106,6 +111,8 @@ public class Client {
 
 
 					}
+				
+						
 					//send ok to to say send next server info
 					sendToServer("OK");
 				}
@@ -128,6 +135,9 @@ public class Client {
 				//if not read initial server resource capacity
 				if(algo.equals("ff") && first == 0) {
 					firstFitAlgo();
+				}
+				if(algo.equals("cf")) {
+					getInitialLowestCost();
 				}
 
 				//scheduling decision
@@ -348,13 +358,50 @@ public class Client {
 		}
 	}
 	
-	public void shortestTime(String readXML) throws SAXException, IOException, ParserConfigurationException {
-		if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
-			if(serverTime < shortest) {	
-				shortest = serverTime; 
-				finalServer = serverType;
-				finalServerID = serverID;
+	
+	
+	
+	public void getInitialLowestCost() throws SAXException, IOException, ParserConfigurationException {
+		NodeList xml = readFile(); 
+		
+		for(int i = 0; i < xml.getLength(); i++) {
+			
+			
+			serverType = xml.item(i).getAttributes().item(6).getNodeValue();
+
+			//The xml file does not have serverID so i set to 0
+
+			serverID = 0;  
+			
+			rate = Float.parseFloat(xml.item(i).getAttributes().item(5).getNodeValue());
+			bootUp = Integer.parseInt(xml.item(i).getAttributes().item(0).getNodeValue());
+			serverCpuCores = Integer.parseInt(xml.item(i).getAttributes().item(1).getNodeValue());
+			serverMemory = Integer.parseInt(xml.item(i).getAttributes().item(4).getNodeValue());
+			serverDisk = Integer.parseInt(xml.item(i).getAttributes().item(2).getNodeValue());
+			
+			Float tempCost = (rate * bootUp) + (jobTime * rate); 
+			
+			if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
+				if(lowest > tempCost) {
+					lowest = tempCost; 
+					finalServer = serverType;
+					finalServerID = serverID;					
+				}
+			
 			}
+		
+		}
+		
+	}
+	
+	
+	public void cheapestMap() {
+		
+	}
+	
+	public void cheapest(String readXML) throws SAXException, IOException, ParserConfigurationException {
+		if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
+			
 
 		}
 		
@@ -380,17 +427,10 @@ public class Client {
 				serverMemory = Integer.parseInt(xml.item(i).getAttributes().item(4).getNodeValue());
 				serverDisk = Integer.parseInt(xml.item(i).getAttributes().item(2).getNodeValue());
 				
-				serverBoot = Integer.parseInt(xml.item(i).getAttributes().item(3).getNodeValue());
 				
-				System.out.print(serverBoot);
 
 				if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
-					if(serverTime < shortest) {	
-						shortest = serverTime; 
-						finalServer = serverType;
-						finalServerID = serverID;
-					}
-
+					
 				}
 			}
 		}
@@ -490,7 +530,7 @@ public class Client {
 		//initialize the nodelist for the xml reader
 		NodeList systemXML = null;
 
-		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse("system.xml");
+		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse("/home/joshua/Downloads/ds-sim/system.xml");
 		doc.getDocumentElement().normalize();
 
 		systemXML = doc.getElementsByTagName("server");
