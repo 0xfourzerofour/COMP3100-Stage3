@@ -50,6 +50,11 @@ public class Client {
 	private int altFit = INT_MIN;
 	private int worstFit = INT_MIN;
 	private boolean worst = false;
+	
+	//Global variables for ShortestTime
+	
+	private int shortest = Integer.MAX_VALUE;
+	private int serverBoot = Integer.MAX_VALUE;
 
 
 
@@ -341,6 +346,55 @@ public class Client {
 				}
 			}
 		}
+	}
+	
+	public void shortestTime(String readXML) throws SAXException, IOException, ParserConfigurationException {
+		if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
+			if(serverTime < shortest) {	
+				shortest = serverTime; 
+				finalServer = serverType;
+				finalServerID = serverID;
+			}
+
+		}
+		
+		else if(readXML == "read") {
+
+			//We first call read the information from system.xml using the readFile() function
+			//after we read the xml, we loop through the nodelist of servers and set the values 
+			//each iteration as we are not using the data from the current server state.
+			//each loop, we have the same if body to find the worst server based on the initial resource capacity
+
+			NodeList xml = readFile(); 
+
+			for(int i = 0; i < xml.getLength(); i++) {
+
+
+				serverType = xml.item(i).getAttributes().item(6).getNodeValue();
+
+				//The xml file does not have serverID so i set to 0
+
+				serverID = 0;  
+
+				serverCpuCores = Integer.parseInt(xml.item(i).getAttributes().item(1).getNodeValue());
+				serverMemory = Integer.parseInt(xml.item(i).getAttributes().item(4).getNodeValue());
+				serverDisk = Integer.parseInt(xml.item(i).getAttributes().item(2).getNodeValue());
+				
+				serverBoot = Integer.parseInt(xml.item(i).getAttributes().item(3).getNodeValue());
+				
+				System.out.print(serverBoot);
+
+				if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
+					if(serverTime < shortest) {	
+						shortest = serverTime; 
+						finalServer = serverType;
+						finalServerID = serverID;
+					}
+
+				}
+			}
+		}
+		
 	}
 
 
