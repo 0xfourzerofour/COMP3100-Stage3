@@ -63,6 +63,9 @@ public class Client {
 	private int bootUp; 
 	private boolean cheapestFound = false; 
 	private int currentMemory = INT_MIN;
+	private int currentCores = INT_MIN;
+	private int currentSize = INT_MIN;
+	private int currentDisk = INT_MIN;
 	
 	private HashMap<String, Float> costMap = new HashMap<String, Float>(); 
 
@@ -145,7 +148,7 @@ public class Client {
 				if(algo.equals("ff") && first == 0) {
 					firstFitAlgo();
 				}
-				if(algo.equals("cf") && !cheapestFound) {
+				if(algo.equals("cf")) {
 					getInitialLowestCost();
 				}
 
@@ -387,20 +390,22 @@ public class Client {
 	
 	public void currentCheapest() {
 				
-		Float tempCost = costMap.get(serverType);  
+		Float tempCost = costMap.get(serverType); 
 		
-			if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
-				if(tempCost < lowest || (tempCost == lowest && serverMemory > currentMemory) ) {
-					lowest = tempCost;
-					currentMemory = serverMemory;
-					finalServer = serverType;
-					finalServerID = serverID;
-					cheapestFound = true; 
-				}
-			
-			}
+		
 
-		
+//		if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
+//			if(tempCost < lowest || (tempCost == lowest && (currentCores > serverCpuCores && currentSize > serverMemory && currentDisk > serverDisk)) ) {
+//				lowest = tempCost;
+//				currentCores = serverCpuCores;
+//				currentSize = serverMemory; 
+//				currentDisk = serverDisk;
+//				finalServer = serverType;
+//				finalServerID = serverID;
+//				cheapestFound = true; 
+//				System.out.println("yes");
+//			}
+//		}
 	}
 	
 	
@@ -425,15 +430,17 @@ public class Client {
 			serverDisk = Integer.parseInt(xml.item(i).getAttributes().item(2).getNodeValue());
 			
 			Float tempCost = rate; 
-			
+
 			if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
-				if(tempCost < lowest ) {
-					lowest = tempCost; 
+				if(tempCost < lowest || (tempCost == lowest && (currentCores > serverCpuCores && currentSize > serverMemory && currentDisk > serverDisk)) ) {
+					lowest = tempCost;
+					currentCores = serverCpuCores;
+					currentSize = serverMemory; 
+					currentDisk = serverDisk;
 					finalServer = serverType;
-					finalServerID = serverID;	
-			
+					finalServerID = serverID;
+					cheapestFound = true; 
 				}
-			
 			}
 		
 		}
@@ -456,9 +463,13 @@ public class Client {
 		bestFit = INT_MAX;
 		minAvail = INT_MAX;
 		worstFit = INT_MIN;
+		currentSize = INT_MIN;
+		currentDisk = INT_MIN; 
+		currentCores = INT_MIN; 
 		altFit = INT_MIN;
 		lowest = FLOAT_MAX;
 		worst = false;
+		cheapestFound = false;
 	}
 
 	//this function works the same as the jobInput however it is called
