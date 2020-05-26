@@ -120,11 +120,8 @@ public class Client {
 						firstFit();
 
 					}
-					if(algo.equals("cf")) {
-						currentCheapest();
-					}
+					
 				
-						
 					//send ok to to say send next server info
 					sendToServer("OK");
 				}
@@ -149,7 +146,7 @@ public class Client {
 					firstFitAlgo();
 				}
 				if(algo.equals("cf")) {
-					getInitialLowestCost();
+					cheapestFit();
 				}
 
 				//scheduling decision
@@ -388,35 +385,27 @@ public class Client {
 		
 	}
 	
-	public void currentCheapest() {
-				
-		Float tempCost = costMap.get(serverType); 
+//	public void cheapestFit() {
+//		Float tempCost = costMap.get(serverType);
 		
-		
-
 //		if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
-//			if(tempCost < lowest || (tempCost == lowest && (currentCores > serverCpuCores && currentSize > serverMemory && currentDisk > serverDisk)) ) {
+//			if(tempCost <= lowest && (currentDisk < serverDisk && currentCores < serverCpuCores && currentSize < serverMemory ))  {
 //				lowest = tempCost;
 //				currentCores = serverCpuCores;
 //				currentSize = serverMemory; 
-//				currentDisk = serverDisk;
+//				currentDisk = serverDisk;		
 //				finalServer = serverType;
 //				finalServerID = serverID;
 //				cheapestFound = true; 
-//				System.out.println("yes");
 //			}
 //		}
-	}
-	
-	
-	
-	
-	public void getInitialLowestCost() throws SAXException, IOException, ParserConfigurationException {
+//	}
+		
+	public void cheapestFit() throws SAXException, IOException, ParserConfigurationException {
 		NodeList xml = readFile(); 
 		
 		for(int i = 0; i < xml.getLength(); i++) {
-			
-			
+				
 			serverType = xml.item(i).getAttributes().item(6).getNodeValue();
 
 			//The xml file does not have serverID so i set to 0
@@ -432,14 +421,13 @@ public class Client {
 			Float tempCost = rate; 
 
 			if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
-				if(tempCost < lowest || (tempCost == lowest && (currentCores > serverCpuCores && currentSize > serverMemory && currentDisk > serverDisk)) ) {
+				if(tempCost < lowest) {
 					lowest = tempCost;
 					currentCores = serverCpuCores;
 					currentSize = serverMemory; 
 					currentDisk = serverDisk;
 					finalServer = serverType;
 					finalServerID = serverID;
-					cheapestFound = true; 
 				}
 			}
 		
