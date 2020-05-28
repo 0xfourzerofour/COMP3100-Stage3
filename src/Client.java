@@ -58,7 +58,8 @@ public class Client {
 	
 	private Float FLOAT_MAX = Float.MAX_VALUE;
 	private Float lowest = FLOAT_MAX;
-	private boolean cheapestFound = false; 
+	private Float rate = FLOAT_MAX;
+
 
 	
 	private HashMap<String, Float> costMap = new HashMap<String, Float>(); 
@@ -74,7 +75,7 @@ public class Client {
 
 		while (!newStatus("NONE")) {
 			if(currentStatus("OK")) {
-				rateMap();
+				
 				sendToServer("REDY");
 			} else if (input1.startsWith("JOBN")) {
 				//if the input string begins with JOBN, 
@@ -363,37 +364,7 @@ public class Client {
 		}
 	}
 	
-	
-	public void rateMap() throws SAXException, IOException, ParserConfigurationException {
-		NodeList xml = readFile(); 
-		
-		for(int i = 0; i < xml.getLength(); i++) {
-			
-			serverType = xml.item(i).getAttributes().item(6).getNodeValue();	
-			rate = Float.parseFloat(xml.item(i).getAttributes().item(5).getNodeValue());
-			
-			costMap.put(serverType, rate);
-		
-		}
-		
-		
-	}
-	
-//	public void cheapestFit() {
-//		Float tempCost = costMap.get(serverType);
-		
-//		if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
-//			if(tempCost <= lowest && (currentDisk < serverDisk && currentCores < serverCpuCores && currentSize < serverMemory ))  {
-//				lowest = tempCost;
-//				currentCores = serverCpuCores;
-//				currentSize = serverMemory; 
-//				currentDisk = serverDisk;		
-//				finalServer = serverType;
-//				finalServerID = serverID;
-//				cheapestFound = true; 
-//			}
-//		}
-//	}
+
 		
 	public void cheapestFit() throws SAXException, IOException, ParserConfigurationException {
 		NodeList xml = readFile(); 
@@ -402,12 +373,11 @@ public class Client {
 				
 			serverType = xml.item(i).getAttributes().item(6).getNodeValue();
 
-			//The xml file does not have serverID so i set to 0
+			//The xml file does not have serverID so i set to first server 0
 
 			serverID = 0;  
 			
 			rate = Float.parseFloat(xml.item(i).getAttributes().item(5).getNodeValue());
-			bootUp = Integer.parseInt(xml.item(i).getAttributes().item(0).getNodeValue());
 			serverCpuCores = Integer.parseInt(xml.item(i).getAttributes().item(1).getNodeValue());
 			serverMemory = Integer.parseInt(xml.item(i).getAttributes().item(4).getNodeValue());
 			serverDisk = Integer.parseInt(xml.item(i).getAttributes().item(2).getNodeValue());
@@ -417,9 +387,6 @@ public class Client {
 			if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
 				if(tempCost < lowest) {
 					lowest = tempCost;
-					currentCores = serverCpuCores;
-					currentSize = serverMemory; 
-					currentDisk = serverDisk;
 					finalServer = serverType;
 					finalServerID = serverID;
 				}
@@ -445,13 +412,9 @@ public class Client {
 		bestFit = INT_MAX;
 		minAvail = INT_MAX;
 		worstFit = INT_MIN;
-		currentSize = INT_MIN;
-		currentDisk = INT_MIN; 
-		currentCores = INT_MIN; 
 		altFit = INT_MIN;
 		lowest = FLOAT_MAX;
 		worst = false;
-		cheapestFound = false;
 	}
 
 	//this function works the same as the jobInput however it is called
