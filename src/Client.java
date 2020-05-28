@@ -1,5 +1,7 @@
+//COMP3100 stage 3 
 
-//Group 16 Vanilla Client DS-SIM
+//Joshua Pauline
+//44931484
 
 
 import java.net.Socket;
@@ -46,6 +48,7 @@ public class Client {
 	private int minAvail = INT_MAX;
 
 	//Global Variables for WF Algorithm
+
 	private final int INT_MIN = Integer.MIN_VALUE;
 	private int altFit = INT_MIN;
 	private int worstFit = INT_MIN;
@@ -53,19 +56,10 @@ public class Client {
 	
 	//Global variables for cheapestFit
 	
-	
-	
 	private Float FLOAT_MAX = Float.MAX_VALUE;
-	private int serverHourlyRate = INT_MAX;
-	private int initialLow = INT_MAX;
 	private Float lowest = FLOAT_MAX;
-	private Float rate;
-	private int bootUp; 
 	private boolean cheapestFound = false; 
-	private int currentMemory = INT_MIN;
-	private int currentCores = INT_MIN;
-	private int currentSize = INT_MIN;
-	private int currentDisk = INT_MIN;
+
 	
 	private HashMap<String, Float> costMap = new HashMap<String, Float>(); 
 
