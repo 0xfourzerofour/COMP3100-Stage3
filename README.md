@@ -1,4 +1,4 @@
-# COMP3100-Stage2
+# COMP3100-Stage3
 
 This Repository is our implementation of 4 different scheduling algorithms for jobs that have varying resource needs to be run on servers with various different resource capacities
 
