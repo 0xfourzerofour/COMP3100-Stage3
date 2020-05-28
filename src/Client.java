@@ -489,7 +489,7 @@ public class Client {
 		//initialize the nodelist for the xml reader
 		NodeList systemXML = null;
 
-		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse("/home/joshua/Downloads/ds-sim/system.xml");
+		Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse("system.xml");
 		doc.getDocumentElement().normalize();
 
 		systemXML = doc.getElementsByTagName("server");
