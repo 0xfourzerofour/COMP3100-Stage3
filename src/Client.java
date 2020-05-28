@@ -61,11 +61,6 @@ public class Client {
 	private Float rate = FLOAT_MAX;
 
 
-	
-	private HashMap<String, Float> costMap = new HashMap<String, Float>(); 
-
-
-
 	public Client(String algo ,String address, int port) throws UnknownHostException, IOException, SAXException, ParserConfigurationException {
 		//start connection with server
 		openConnection(address,port); 
@@ -155,8 +150,6 @@ public class Client {
 				//firstFit function is reading the current server info
 				//and can schedule accordingly. 
 				first = 0;
-				
-				
 
 			}
 		}
@@ -377,12 +370,19 @@ public class Client {
 
 			serverID = 0;  
 			
+			//get rate, CPU Cores, Memory and Server from server in nodelist
+			
 			rate = Float.parseFloat(xml.item(i).getAttributes().item(5).getNodeValue());
 			serverCpuCores = Integer.parseInt(xml.item(i).getAttributes().item(1).getNodeValue());
 			serverMemory = Integer.parseInt(xml.item(i).getAttributes().item(4).getNodeValue());
 			serverDisk = Integer.parseInt(xml.item(i).getAttributes().item(2).getNodeValue());
 			
 			Float tempCost = rate; 
+			
+			//check if server has capable initial resource capacity for current server iteration
+			//check if previous lowest is larger than current server rate to find if the current
+			//server has a cheaper rate.
+			//if so, update final server values to reflex cheapest server. 
 
 			if(jobCpuCores <= serverCpuCores && jobDisk <= serverDisk && jobMemory <= serverMemory) {
 				if(tempCost < lowest) {
